@@ -50,17 +50,17 @@ export const addReading = async (req: Request, res: Response, next: NextFunction
 
         if (lastReading) {
             if (day_reading < lastReading.day_reading) {
-                finalDayReading = lastReading.day_reading + tariff.day_penalty;
+                finalDayReading = Number(lastReading.day_reading) + Number(tariff.day_penalty);
                 dayUsage = tariff.day_penalty;
             }
             if (night_reading < lastReading.night_reading) {
-                finalNightReading = lastReading.night_reading + tariff.night_penalty;
+                finalNightReading = Number(lastReading.night_reading) + Number(tariff.night_penalty);
                 nightUsage = tariff.night_penalty;
             }
         }
 
-        const dayPayment = dayUsage * tariff.day_rate;
-        const nightPayment = nightUsage * tariff.night_rate;
+        const dayPayment = Number(dayUsage) * Number(tariff.day_rate);
+        const nightPayment = Number(nightUsage) * Number(tariff.night_rate);
         const totalAmount = dayPayment + nightPayment;
 
         const newReading = readingRepository.create({
