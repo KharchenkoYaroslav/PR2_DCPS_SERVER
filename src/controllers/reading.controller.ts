@@ -13,14 +13,18 @@ const meterRepository = AppDataSource.getRepository(Meter);
 export const addReading = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { meterId, day_reading, night_reading } = req.body;
+        console.log("Отримані дані:", { meterId, day_reading, night_reading });
 
         if (!meterId || day_reading === undefined || night_reading === undefined) {
+            console.log("Не всі обов'язкові дані вказані.");
             res.status(400).json({ message: "Не всі обов'язкові дані вказані." });
             return;
         }
 
         const meter = await meterRepository.findOneBy({ id: Number(meterId) });
+        console.log("Знайдений лічильник:", meter);
         if (!meter) {
+            console.log("Лічильник не знайдено.");
             res.status(404).json({ message: "Meter not found" });
             return;
         }
@@ -29,9 +33,12 @@ export const addReading = async (req: Request, res: Response, next: NextFunction
             where: { meter: { id: meterId } },
             order: { reading_date: "DESC" }
         });
+        console.log("Останній показник:", lastReading);
 
         const tariff = await tariffRepository.findOne({ where: { id: 1 } });
+        console.log("Тариф:", tariff);
         if (!tariff) {
+            console.log("Тариф не знайдено.");
             res.status(404).json({ message: "Tariff not found" });
             return;
         }
@@ -54,7 +61,6 @@ export const addReading = async (req: Request, res: Response, next: NextFunction
 
         const dayPayment = dayUsage * tariff.day_rate;
         const nightPayment = nightUsage * tariff.night_rate;
-
         const totalAmount = dayPayment + nightPayment;
 
         const newReading = readingRepository.create({
@@ -63,12 +69,14 @@ export const addReading = async (req: Request, res: Response, next: NextFunction
             night_reading: finalNightReading
         });
         await readingRepository.save(newReading);
+        console.log("Новий показник збережено:", newReading);
 
         const newBill = billRepository.create({
             meter,
             amount: totalAmount
         });
         await billRepository.save(newBill);
+        console.log("Новий рахунок збережено:", newBill);
 
         res.status(201).json({
             message: "Показники успішно додані.",
@@ -77,6 +85,7 @@ export const addReading = async (req: Request, res: Response, next: NextFunction
         });
 
     } catch (error) {
+        console.error("Помилка при додаванні показників:", error);
         next(error);
     }
 };
