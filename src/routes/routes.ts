@@ -7,9 +7,9 @@ import { getTariff } from "../controllers/tariff.controller";
 const router = Router();
 
 // Лічильники
- router.get("/meters", getAllMeters);
- router.get("/meters/:id", getMeterById);
- router.post("/meters", createMeter);
+router.get("/meters", getAllMeters);
+router.get("/meters/:id", getMeterById);
+router.post("/meters", createMeter);
 
 // Показники
 router.post("/readings", addReading);

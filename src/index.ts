@@ -3,9 +3,16 @@ import routes from "./routes/routes";
 import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import { Tariff } from "./entity/Tariff";
+import cors from "cors"; 
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({
+    origin: 'http://localhost:5173', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+}));
 
 AppDataSource.initialize()
     .then(async () => {
@@ -29,5 +36,3 @@ AppDataSource.initialize()
     .catch((err) => {
         console.error("Error during Data Source initialization:", err);
     });
-
-
