@@ -5,7 +5,6 @@ import { AppDataSource } from "./data-source";
 import { Tariff } from "./entity/Tariff";
 import cors from "cors";
 
-
 const app = express();
 app.use(express.json());
 
@@ -30,6 +29,13 @@ AppDataSource.initialize()
         }
 
         app.use("/", routes);
+
+        if (process.env.NODE_ENV !== 'test') {
+            const PORT = process.env.PORT || 3000;
+            app.listen(PORT, () => {
+                console.log(`Server is running on http://localhost:${PORT}`);
+            });
+        }
     })
     .catch((err) => {
         console.error("Error during Data Source initialization:", err);

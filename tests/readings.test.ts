@@ -18,6 +18,11 @@ beforeAll(async () => {
         }
 
         app.use("/", routes);
+
+        const TEST_PORT = process.env.TEST_PORT || 5000;
+        app.listen(TEST_PORT, () => {
+            console.log(`Test server is running on http://localhost:${TEST_PORT}`);
+        });
     } catch (error) {
         console.error("Error during Data Source initialization:", error);
     }
@@ -30,7 +35,7 @@ afterAll(async () => {
     } catch (error) {
         console.error("Error during Data Source destruction:", error);
     }
-});
+}); 
 
 describe("Meter Readings API", () => {
     const meterId = 1;
@@ -81,7 +86,7 @@ describe("Meter Readings API", () => {
         expect(response.body.readings[0]).toHaveProperty("day_reading", 100);
         expect(response.body.readings[0]).toHaveProperty("night_reading", 50);
     });
-    
+
     it("отримання показників з заниженими нічними показниками", async () => {
         const response = await request(app)
             .post("/readings")
