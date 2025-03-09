@@ -21,6 +21,12 @@ export const addReading = async (req: Request, res: Response, next: NextFunction
             return;
         }
 
+        if (day_reading < 0 || night_reading < 0) {
+            console.log("Виявлено від'ємні показники.");
+            res.status(400).json({ message: "Показники не можуть бути від'ємними." });
+            return;
+        }
+
         const meter = await meterRepository.findOneBy({ id: Number(meterId) });
         console.log("Знайдений лічильник:", meter);
         if (!meter) {
@@ -89,6 +95,7 @@ export const addReading = async (req: Request, res: Response, next: NextFunction
         next(error);
     }
 };
+
 
 export const getReadingsByMeterId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
